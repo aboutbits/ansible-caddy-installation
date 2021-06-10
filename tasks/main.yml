@@ -1,0 +1,72 @@
+---
+- name: Download Caddy
+  ansible.builtin.get_url:
+    url: "https://caddyserver.com/api/download?os=linux&arch=amd64{{ caddy_installation_packages | map('urlencode') | map('regex_replace', '^(.*)$', '&p=\\1') | join('') }}"
+    dest: /usr/bin/caddy
+    mode: 0755
+
+- name: Create Caddy group
+  ansible.builtin.group:
+    name: caddy
+    system: yes
+
+- name: Create Caddy user
+  ansible.builtin.user:
+    name: caddy
+    group: caddy
+    home: /var/lib/caddy
+    shell: /usr/sbin/nologin
+
+- name: Create /etc/caddy directory
+  ansible.builtin.file:
+    dest: /etc/caddy
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create /etc/caddy/conf.d directory
+  ansible.builtin.file:
+    dest: /etc/caddy/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy Caddyfile
+  ansible.builtin.copy:
+    src: Caddyfile
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create /var/log/caddy directory
+  ansible.builtin.file:
+    dest: /var/log/caddy
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: 0755
+
+- name: Copy service file
+  ansible.builtin.copy:
+    src: caddy.service
+    dest: /etc/systemd/system/caddy.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reload systemd config
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable Caddy service
+  ansible.builtin.systemd:
+    name: caddy
+    enabled: yes
+
+- name: Start/Restart Caddy service
+  ansible.builtin.systemd:
+    name: caddy
+    state: restarted
