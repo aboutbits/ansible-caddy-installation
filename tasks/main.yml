@@ -3,7 +3,10 @@
   ansible.builtin.get_url:
     url: "https://caddyserver.com/api/download?os=linux&arch=amd64{{ caddy_installation_packages | map('urlencode') | map('regex_replace', '^(.*)$', '&p=\\1') | join('') }}"
     dest: /usr/bin/caddy
+    owner: root
+    group: root
     mode: 0755
+    timeout: 30
 
 - name: Create Caddy group
   ansible.builtin.group:
