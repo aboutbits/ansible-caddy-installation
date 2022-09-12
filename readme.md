@@ -11,8 +11,9 @@ Install Caddy role.
 
 ```yaml
 - hosts: all
-  roles:
-    - role: ansible-caddy-installation
+  tasks:
+    - ansible.builtin.include_role:
+        name: ansible-caddy-installation
       vars:
         caddy_installation_packages:
           - github.com/caddy-dns/digitalocean
