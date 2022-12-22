@@ -36,6 +36,14 @@
     group: root
     mode: 0755
 
+- name: Create /etc/caddy/certificates directory
+  ansible.builtin.file:
+    dest: /etc/caddy/certificates
+    state: directory
+    owner: root
+    group: root
+    mode: 0744
+
 - name: Copy Caddyfile
   ansible.builtin.copy:
     src: Caddyfile
