@@ -46,7 +46,7 @@
 
 - name: Copy Caddyfile
   ansible.builtin.copy:
-    src: Caddyfile
+    src: "{{ caddyfile }}"
     dest: /etc/caddy/Caddyfile
     owner: root
     group: root
